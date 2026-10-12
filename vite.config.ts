@@ -14,7 +14,15 @@ export default defineConfig({
   },
   vite: {
     optimizeDeps: {
-      include: ["@radix-ui/react-dialog", "@radix-ui/react-alert-dialog", "@radix-ui/react-label"],
+      include: [
+        "@radix-ui/react-dialog",
+        "@radix-ui/react-alert-dialog",
+        "@radix-ui/react-label",
+        "@radix-ui/react-popover",
+        "date-fns",
+        "date-fns/locale",
+        "react-day-picker",
+      ],
     },
   },
 });
