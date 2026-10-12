@@ -71,6 +71,10 @@ export function DatePicker({
           mode="single"
           captionLayout="dropdown"
           locale={bg}
+          formatters={{
+            formatMonthDropdown: (date) => format(date, "LLLL", { locale: bg }),
+            formatCaption: (date) => `${format(date, "LLLL yyyy", { locale: bg })}`,
+          }}
           selected={selected}
           defaultMonth={selected ?? new Date()}
           onSelect={(date) => {
