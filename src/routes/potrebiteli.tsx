@@ -14,6 +14,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { DatePicker, formatDateDisplay } from "@/components/DatePicker";
 
 export const Route = createFileRoute("/potrebiteli")({
   head: () => ({
@@ -63,11 +64,7 @@ const empty: Omit<User, "id"> = {
   firstName: "", middleName: "", lastName: "", username: "", address: "", birthDate: "",
 };
 
-function formatDate(d: string) {
-  if (!d) return "";
-  const [y, m, day] = d.split("-");
-  return `${day}.${m}.${y}`;
-}
+const formatDate = formatDateDisplay;
 
 function PotrebiteliPage() {
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -171,7 +168,7 @@ function PotrebiteliPage() {
                 <TableHead key={key} className="py-2">
                   <Input
                     className="h-8"
-                    placeholder="Филтър..."
+                    placeholder={key === "birthDate" ? "дд.мм.гггг" : "Филтър..."}
                     value={filters[key] ?? ""}
                     onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
                   />
@@ -223,7 +220,14 @@ function PotrebiteliPage() {
             {field("lastName", "Фамилия", true)}
             {field("username", "Юзернейм", true)}
             {field("address", "Адрес")}
-            {field("birthDate", "Дата на раждане", false, "date")}
+            <div className="grid gap-1.5">
+              <Label htmlFor="birthDate">Дата на раждане</Label>
+              <DatePicker
+                id="birthDate"
+                value={form.birthDate}
+                onChange={(v) => setForm((f) => ({ ...f, birthDate: v }))}
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Отказ</Button>
