@@ -77,7 +77,7 @@ function PotrebiteliPage() {
   const [editing, setEditing] = useState<User | null>(null);
   const [form, setForm] = useState<Omit<User, "id">>(empty);
   const [open, setOpen] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof typeof empty, string>>>({});
   const [toDelete, setToDelete] = useState<User | null>(null);
 
   const rows = useMemo(() => {
@@ -111,7 +111,7 @@ function PotrebiteliPage() {
   };
 
   const save = () => {
-    const e: Record<string, string> = {};
+    const e: Partial<Record<keyof typeof empty, string>> = {};
     const t = (s: string) => s.trim();
     if (!t(form.firstName)) e.firstName = "Задължително поле";
     if (!t(form.lastName)) e.lastName = "Задължително поле";
