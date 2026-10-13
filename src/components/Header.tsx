@@ -1,4 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/hooks/useSession";
+import { emailToUsername } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
@@ -9,6 +13,16 @@ const navItems = [
 ] as const;
 
 export function Header() {
+  const session = useSession();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const items = session ? navItems : navItems.filter((i) => i.to === "/");
+  async function signOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/", replace: true });
+  }
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
@@ -20,7 +34,7 @@ export function Header() {
             </div>
           </Link>
           <nav className="hidden items-center gap-1 sm:flex">
-            {navItems.map((item) => (
+            {items.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -39,11 +53,18 @@ export function Header() {
             ))}
           </nav>
         </div>
-        <Button size="sm">Вход</Button>
+        {session ? (
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">{emailToUsername(session.user.email)}</span>
+            <Button size="sm" variant="outline" onClick={signOut}>Изход</Button>
+          </div>
+        ) : (
+          <Button size="sm" asChild><Link to="/auth">Вход</Link></Button>
+        )}
       </div>
       {/* Mobile nav */}
       <nav className="flex items-center gap-1 overflow-x-auto border-t border-border px-4 py-2 sm:hidden">
-        {navItems.map((item) => (
+        {items.map((item) => (
           <Link
             key={item.to}
             to={item.to}

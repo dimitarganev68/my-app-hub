@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/otpusk")({
+export const Route = createFileRoute("/_authenticated/otpusk")({
   head: () => ({
     meta: [
       { title: "Отпуски — Фирма ЕООД" },

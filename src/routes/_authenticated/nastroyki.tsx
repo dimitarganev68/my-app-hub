@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/nastroyki")({
+export const Route = createFileRoute("/_authenticated/nastroyki")({
   head: () => ({
     meta: [
       { title: "Настройки — Фирма ЕООД" },
