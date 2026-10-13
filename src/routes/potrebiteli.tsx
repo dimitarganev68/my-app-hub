@@ -122,6 +122,8 @@ function PotrebiteliPage() {
     } catch (err) {
       if (err instanceof Error && err.message.includes("DUPLICATE_USERNAME"))
         setErrors({ username: "Юзернеймът вече съществува" });
+      else if (err instanceof Error && err.message.includes("Invalid"))
+        setErrors({ username: "Само латински букви, цифри, точка и тире" });
       else toast.error("Грешка при запис. Опитайте отново.");
     } finally {
       setSaving(false);
