@@ -106,6 +106,8 @@ function PotrebiteliPage() {
     if (!t(form.firstName)) e.firstName = "Задължително поле";
     if (!t(form.lastName)) e.lastName = "Задължително поле";
     if (!t(form.username)) e.username = "Задължително поле";
+    else if (!USERNAME_PATTERN.test(t(form.username)))
+      e.username = "Само латински букви, цифри, точка и тире";
     else if (users.some((u) => u.username.toLowerCase() === t(form.username).toLowerCase() && u.id !== editing?.id))
       e.username = "Юзернеймът вече съществува";
     setErrors(e);
