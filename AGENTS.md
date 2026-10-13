@@ -8,3 +8,4 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+- Потребители се пазят в таблица app_users; достъпът минава през server functions в src/lib/users.functions.ts (единна валидация на сървъра).

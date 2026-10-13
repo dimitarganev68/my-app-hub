@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { queryOptions, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { ArrowDown, ArrowUp, ArrowUpDown, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +17,11 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { DatePicker, formatDateDisplay } from "@/components/DatePicker";
+import {
+  listUsers, createUser, updateUser, deleteUser, type AppUser,
+} from "@/lib/users.functions";
+
+const usersQuery = queryOptions({ queryKey: ["app_users"], queryFn: () => listUsers() });
 
 export const Route = createFileRoute("/potrebiteli")({
   head: () => ({
@@ -27,19 +34,11 @@ export const Route = createFileRoute("/potrebiteli")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(usersQuery),
   component: PotrebiteliPage,
 });
 
-type User = {
-  id: number;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  username: string;
-  address: string;
-  birthDate: string;
-};
-
+type User = AppUser;
 type Key = keyof User;
 
 const columns: { key: Key; label: string }[] = [
@@ -52,14 +51,6 @@ const columns: { key: Key; label: string }[] = [
   { key: "birthDate", label: "Дата на раждане" },
 ];
 
-const initialUsers: User[] = [
-  { id: 1, firstName: "Иван", middleName: "Петров", lastName: "Иванов", username: "ivan.ivanov", address: "София, ул. Витоша 10", birthDate: "1985-04-12" },
-  { id: 2, firstName: "Мария", middleName: "Георгиева", lastName: "Петрова", username: "maria.p", address: "Пловдив, ул. Главна 5", birthDate: "1990-09-23" },
-  { id: 3, firstName: "Георги", middleName: "", lastName: "Димитров", username: "gdimitrov", address: "Варна, бул. Приморски 22", birthDate: "1978-01-30" },
-  { id: 4, firstName: "Елена", middleName: "Николова", lastName: "Стоянова", username: "elena.s", address: "", birthDate: "1995-12-05" },
-  { id: 5, firstName: "Петър", middleName: "Иванов", lastName: "Колев", username: "pkolev", address: "Бургас, ул. Александровска 3", birthDate: "1988-07-18" },
-];
-
 const empty: Omit<User, "id"> = {
   firstName: "", middleName: "", lastName: "", username: "", address: "", birthDate: "",
 };
@@ -67,15 +58,17 @@ const empty: Omit<User, "id"> = {
 const formatDate = formatDateDisplay;
 
 function PotrebiteliPage() {
-  const [users, setUsers] = useState<User[]>(initialUsers);
-  const [nextId, setNextId] = useState(initialUsers.length + 1);
+  const qc = useQueryClient();
+  const { data: users } = useSuspenseQuery(usersQuery);
   const [sort, setSort] = useState<{ key: Key; dir: "asc" | "desc" }>({ key: "id", dir: "asc" });
   const [filters, setFilters] = useState<Partial<Record<Key, string>>>({});
   const [editing, setEditing] = useState<User | null>(null);
   const [form, setForm] = useState<Omit<User, "id">>(empty);
   const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof typeof empty, string>>>({});
   const [toDelete, setToDelete] = useState<User | null>(null);
+  const refresh = () => qc.invalidateQueries({ queryKey: ["app_users"] });
 
   const rows = useMemo(() => {
     const filtered = users.filter((u) =>
@@ -107,7 +100,7 @@ function PotrebiteliPage() {
     setEditing(u); setForm(rest); setErrors({}); setOpen(true);
   };
 
-  const save = () => {
+  const save = async () => {
     const e: Partial<Record<keyof typeof empty, string>> = {};
     const t = (s: string) => s.trim();
     if (!t(form.firstName)) e.firstName = "Задължително поле";
@@ -117,14 +110,30 @@ function PotrebiteliPage() {
       e.username = "Юзернеймът вече съществува";
     setErrors(e);
     if (Object.keys(e).length) return;
-    const clean = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.trim()])) as Omit<User, "id">;
-    if (editing) {
-      setUsers((list) => list.map((u) => (u.id === editing.id ? { ...u, ...clean } : u)));
-    } else {
-      setUsers((list) => [...list, { id: nextId, ...clean }]);
-      setNextId((n) => n + 1);
+    setSaving(true);
+    try {
+      if (editing) await updateUser({ data: { id: editing.id, ...form } });
+      else await createUser({ data: form });
+      await refresh();
+      setOpen(false);
+      toast.success(editing ? "Потребителят е обновен" : "Потребителят е добавен");
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("DUPLICATE_USERNAME"))
+        setErrors({ username: "Юзернеймът вече съществува" });
+      else toast.error("Грешка при запис. Опитайте отново.");
+    } finally {
+      setSaving(false);
     }
-    setOpen(false);
+  };
+
+  const remove = async (u: User) => {
+    try {
+      await deleteUser({ data: { id: u.id } });
+      await refresh();
+      toast.success("Потребителят е изтрит");
+    } catch {
+      toast.error("Грешка при изтриване. Опитайте отново.");
+    }
   };
 
   const field = (key: keyof typeof empty, label: string, required = false, type = "text") => (
@@ -231,7 +240,7 @@ function PotrebiteliPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Отказ</Button>
-            <Button onClick={save}>Запази</Button>
+            <Button onClick={save} disabled={saving}>Запази</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -248,7 +257,7 @@ function PotrebiteliPage() {
             <AlertDialogCancel>Отказ</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                if (toDelete) setUsers((l) => l.filter((u) => u.id !== toDelete.id));
+                if (toDelete) void remove(toDelete);
                 setToDelete(null);
               }}
             >
