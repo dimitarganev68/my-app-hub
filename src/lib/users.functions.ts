@@ -36,11 +36,12 @@ const toUser = (r: Row): AppUser => ({
 });
 
 const str = (max = 100) => z.string().trim().max(max);
+export const USERNAME_PATTERN = /^[A-Za-z0-9.-]+$/;
 const userInput = z.object({
   firstName: str().min(1),
   middleName: str(),
   lastName: str().min(1),
-  username: str().min(1),
+  username: str().min(1).regex(USERNAME_PATTERN),
   address: str(),
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).or(z.literal("")),
 });

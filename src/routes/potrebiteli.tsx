@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DatePicker, formatDateDisplay } from "@/components/DatePicker";
 import {
-  listUsers, createUser, updateUser, deleteUser, type AppUser,
+  listUsers, createUser, updateUser, deleteUser, USERNAME_PATTERN, type AppUser,
 } from "@/lib/users.functions";
 
 const usersQuery = queryOptions({ queryKey: ["app_users"], queryFn: () => listUsers() });
@@ -106,6 +106,8 @@ function PotrebiteliPage() {
     if (!t(form.firstName)) e.firstName = "Задължително поле";
     if (!t(form.lastName)) e.lastName = "Задължително поле";
     if (!t(form.username)) e.username = "Задължително поле";
+    else if (!USERNAME_PATTERN.test(t(form.username)))
+      e.username = "Само латински букви, цифри, точка и тире";
     else if (users.some((u) => u.username.toLowerCase() === t(form.username).toLowerCase() && u.id !== editing?.id))
       e.username = "Юзернеймът вече съществува";
     setErrors(e);
@@ -120,6 +122,8 @@ function PotrebiteliPage() {
     } catch (err) {
       if (err instanceof Error && err.message.includes("DUPLICATE_USERNAME"))
         setErrors({ username: "Юзернеймът вече съществува" });
+      else if (err instanceof Error && err.message.includes("Invalid"))
+        setErrors({ username: "Само латински букви, цифри, точка и тире" });
       else toast.error("Грешка при запис. Опитайте отново.");
     } finally {
       setSaving(false);
