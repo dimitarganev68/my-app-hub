@@ -240,7 +240,7 @@ function PotrebiteliPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Отказ</Button>
-            <Button onClick={save}>Запази</Button>
+            <Button onClick={save} disabled={saving}>Запази</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -257,7 +257,7 @@ function PotrebiteliPage() {
             <AlertDialogCancel>Отказ</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                if (toDelete) setUsers((l) => l.filter((u) => u.id !== toDelete.id));
+                if (toDelete) void remove(toDelete);
                 setToDelete(null);
               }}
             >
