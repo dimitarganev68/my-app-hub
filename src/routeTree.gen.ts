@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedNastroykiRouteImport } from './routes/_authenticated/nastroyki'
 import { Route as AuthenticatedOtpuskRouteImport } from './routes/_authenticated/otpusk'
 import { Route as AuthenticatedPotrebiteliRouteImport } from './routes/_authenticated/potrebiteli'
@@ -19,31 +21,42 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedNastroykiRoute = AuthenticatedNastroykiRouteImport.update({
-  id: '/_authenticated/nastroyki',
-  path: '/nastroyki',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedOtpuskRoute = AuthenticatedOtpuskRouteImport.update({
-  id: '/_authenticated/otpusk',
-  path: '/otpusk',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedNastroykiRoute = AuthenticatedNastroykiRouteImport.update({
+  id: '/nastroyki',
+  path: '/nastroyki',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOtpuskRoute = AuthenticatedOtpuskRouteImport.update({
+  id: '/otpusk',
+  path: '/otpusk',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPotrebiteliRoute =
   AuthenticatedPotrebiteliRouteImport.update({
-    id: '/_authenticated/potrebiteli',
+    id: '/potrebiteli',
     path: '/potrebiteli',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/nastroyki': typeof AuthenticatedNastroykiRoute
   '/otpusk': typeof AuthenticatedOtpuskRoute
   '/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/nastroyki': typeof AuthenticatedNastroykiRoute
   '/otpusk': typeof AuthenticatedOtpuskRoute
   '/potrebiteli': typeof AuthenticatedPotrebiteliRoute
@@ -51,18 +64,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/_authenticated/nastroyki': typeof AuthenticatedNastroykiRoute
   '/_authenticated/otpusk': typeof AuthenticatedOtpuskRoute
   '/_authenticated/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/nastroyki' | '/otpusk' | '/potrebiteli'
+  fullPaths: '/' | '/auth' | '/nastroyki' | '/otpusk' | '/potrebiteli'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/nastroyki' | '/otpusk' | '/potrebiteli'
+  to: '/' | '/auth' | '/nastroyki' | '/otpusk' | '/potrebiteli'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/_authenticated/nastroyki'
     | '/_authenticated/otpusk'
     | '/_authenticated/potrebiteli'
@@ -70,9 +87,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedNastroykiRoute: typeof AuthenticatedNastroykiRoute
-  AuthenticatedOtpuskRoute: typeof AuthenticatedOtpuskRoute
-  AuthenticatedPotrebiteliRoute: typeof AuthenticatedPotrebiteliRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -84,35 +100,63 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/nastroyki': {
       id: '/_authenticated/nastroyki'
       path: '/nastroyki'
       fullPath: '/nastroyki'
       preLoaderRoute: typeof AuthenticatedNastroykiRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/otpusk': {
       id: '/_authenticated/otpusk'
       path: '/otpusk'
       fullPath: '/otpusk'
       preLoaderRoute: typeof AuthenticatedOtpuskRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/potrebiteli': {
       id: '/_authenticated/potrebiteli'
       path: '/potrebiteli'
       fullPath: '/potrebiteli'
       preLoaderRoute: typeof AuthenticatedPotrebiteliRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedNastroykiRoute: typeof AuthenticatedNastroykiRoute
+  AuthenticatedOtpuskRoute: typeof AuthenticatedOtpuskRoute
+  AuthenticatedPotrebiteliRoute: typeof AuthenticatedPotrebiteliRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNastroykiRoute: AuthenticatedNastroykiRoute,
   AuthenticatedOtpuskRoute: AuthenticatedOtpuskRoute,
   AuthenticatedPotrebiteliRoute: AuthenticatedPotrebiteliRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

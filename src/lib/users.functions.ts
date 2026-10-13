@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -12,22 +12,6 @@ export type AppUser = {
   address: string;
   birthDate: string;
 };
-
-function db() {
-  const url = process.env["SUPABASE_URL"]!;
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-  return createClient<Database>(url, key, {
-    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
-    global: {
-      fetch: (input, init) => {
-        const h = new Headers(init?.headers);
-        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
-        h.set("apikey", key);
-        return fetch(input, { ...init, headers: h });
-      },
-    },
-  });
-}
 
 type Row = Database["public"]["Tables"]["app_users"]["Row"];
 const toUser = (r: Row): AppUser => ({
@@ -55,32 +39,35 @@ function fail(error: { code?: string; message: string }): never {
   throw new Error(error.message);
 }
 
-export const listUsers = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await db().from("app_users").select("*").order("id");
+export const listUsers = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
+  const { data, error } = await context.supabase.from("app_users").select("*").order("id");
   if (error) fail(error);
   return data.map(toUser);
 });
 
 export const createUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d) => userInput.parse(d))
-  .handler(async ({ data }) => {
-    const { error } = await db().from("app_users").insert(toRow(data));
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("app_users").insert(toRow(data));
     if (error) fail(error);
     return { ok: true };
   });
 
 export const updateUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d) => userInput.extend({ id: z.number().int() }).parse(d))
-  .handler(async ({ data }) => {
-    const { error } = await db().from("app_users").update(toRow(data)).eq("id", data.id);
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("app_users").update(toRow(data)).eq("id", data.id);
     if (error) fail(error);
     return { ok: true };
   });
 
 export const deleteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ id: z.number().int() }).parse(d))
-  .handler(async ({ data }) => {
-    const { error } = await db().from("app_users").delete().eq("id", data.id);
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("app_users").delete().eq("id", data.id);
     if (error) fail(error);
     return { ok: true };
   });
