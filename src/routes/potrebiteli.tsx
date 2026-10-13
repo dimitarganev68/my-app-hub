@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DatePicker, formatDateDisplay } from "@/components/DatePicker";
 import {
-  listUsers, createUser, updateUser, deleteUser, type AppUser,
+  listUsers, createUser, updateUser, deleteUser, USERNAME_PATTERN, type AppUser,
 } from "@/lib/users.functions";
 
 const usersQuery = queryOptions({ queryKey: ["app_users"], queryFn: () => listUsers() });
