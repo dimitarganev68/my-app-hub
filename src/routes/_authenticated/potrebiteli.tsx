@@ -23,7 +23,7 @@ import {
 
 const usersQuery = queryOptions({ queryKey: ["app_users"], queryFn: () => listUsers() });
 
-export const Route = createFileRoute("/potrebiteli")({
+export const Route = createFileRoute("/_authenticated/potrebiteli")({
   head: () => ({
     meta: [
       { title: "Потребители — Фирма ЕООД" },
