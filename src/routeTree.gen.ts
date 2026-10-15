@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedNastroykiRouteImport } from './routes/_authenticated/nastroyki'
+import { Route as AuthenticatedGrupiRouteImport } from './routes/_authenticated/grupi'
 import { Route as AuthenticatedOtpuskRouteImport } from './routes/_authenticated/otpusk'
 import { Route as AuthenticatedPotrebiteliRouteImport } from './routes/_authenticated/potrebiteli'
 
@@ -30,9 +30,9 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedNastroykiRoute = AuthenticatedNastroykiRouteImport.update({
-  id: '/nastroyki',
-  path: '/nastroyki',
+const AuthenticatedGrupiRoute = AuthenticatedGrupiRouteImport.update({
+  id: '/grupi',
+  path: '/grupi',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOtpuskRoute = AuthenticatedOtpuskRouteImport.update({
@@ -50,14 +50,14 @@ const AuthenticatedPotrebiteliRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/nastroyki': typeof AuthenticatedNastroykiRoute
+  '/grupi': typeof AuthenticatedGrupiRoute
   '/otpusk': typeof AuthenticatedOtpuskRoute
   '/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/nastroyki': typeof AuthenticatedNastroykiRoute
+  '/grupi': typeof AuthenticatedGrupiRoute
   '/otpusk': typeof AuthenticatedOtpuskRoute
   '/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
@@ -66,21 +66,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/nastroyki': typeof AuthenticatedNastroykiRoute
+  '/_authenticated/grupi': typeof AuthenticatedGrupiRoute
   '/_authenticated/otpusk': typeof AuthenticatedOtpuskRoute
   '/_authenticated/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/nastroyki' | '/otpusk' | '/potrebiteli'
+  fullPaths: '/' | '/auth' | '/grupi' | '/otpusk' | '/potrebiteli'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/nastroyki' | '/otpusk' | '/potrebiteli'
+  to: '/' | '/auth' | '/grupi' | '/otpusk' | '/potrebiteli'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/nastroyki'
+    | '/_authenticated/grupi'
     | '/_authenticated/otpusk'
     | '/_authenticated/potrebiteli'
   fileRoutesById: FileRoutesById
@@ -114,11 +114,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/nastroyki': {
-      id: '/_authenticated/nastroyki'
-      path: '/nastroyki'
-      fullPath: '/nastroyki'
-      preLoaderRoute: typeof AuthenticatedNastroykiRouteImport
+    '/_authenticated/grupi': {
+      id: '/_authenticated/grupi'
+      path: '/grupi'
+      fullPath: '/grupi'
+      preLoaderRoute: typeof AuthenticatedGrupiRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/otpusk': {
@@ -139,13 +139,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedNastroykiRoute: typeof AuthenticatedNastroykiRoute
+  AuthenticatedGrupiRoute: typeof AuthenticatedGrupiRoute
   AuthenticatedOtpuskRoute: typeof AuthenticatedOtpuskRoute
   AuthenticatedPotrebiteliRoute: typeof AuthenticatedPotrebiteliRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedNastroykiRoute: AuthenticatedNastroykiRoute,
+  AuthenticatedGrupiRoute: AuthenticatedGrupiRoute,
   AuthenticatedOtpuskRoute: AuthenticatedOtpuskRoute,
   AuthenticatedPotrebiteliRoute: AuthenticatedPotrebiteliRoute,
 }

@@ -4,12 +4,28 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
 import { emailToUsername } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+function SettingsMenu({ className }: { className: string }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className={className}>
+        Настройки <ChevronDown className="ml-1 inline h-4 w-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuItem asChild><Link to="/grupi">Групи</Link></DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 const navItems = [
   { to: "/", label: "Начална" },
   { to: "/otpusk", label: "Отпуски" },
   { to: "/potrebiteli", label: "Потребители" },
-  { to: "/nastroyki", label: "Настройки" },
 ] as const;
 
 export function Header() {
@@ -51,6 +67,7 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            {session && <SettingsMenu className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground" />}
           </nav>
         </div>
         {session ? (
@@ -81,6 +98,7 @@ export function Header() {
             {item.label}
           </Link>
         ))}
+        {session && <SettingsMenu className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground" />}
       </nav>
     </header>
   );

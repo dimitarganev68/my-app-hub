@@ -15,6 +15,7 @@ export default defineConfig({
   vite: {
     optimizeDeps: {
       include: [
+        "@radix-ui/react-dropdown-menu",
         "@radix-ui/react-dialog",
         "@radix-ui/react-alert-dialog",
         "@radix-ui/react-label",

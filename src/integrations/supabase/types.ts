@@ -50,6 +50,30 @@ export type Database = {
         }
         Relationships: []
       }
+      groups: {
+        Row: {
+          comment: string
+          created_at: string
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string
+          created_at?: string
+          id?: never
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: never
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
