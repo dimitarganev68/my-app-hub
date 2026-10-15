@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { emailToUsername } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
@@ -30,6 +31,7 @@ const navItems = [
 
 export function Header() {
   const session = useSession();
+  const isAdmin = useIsAdmin();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const items = session ? navItems : navItems.filter((i) => i.to === "/");
@@ -67,7 +69,7 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            {session && <SettingsMenu className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground" />}
+            {isAdmin && <SettingsMenu className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground" />}
           </nav>
         </div>
         {session ? (
@@ -98,7 +100,7 @@ export function Header() {
             {item.label}
           </Link>
         ))}
-        {session && <SettingsMenu className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground" />}
+        {isAdmin && <SettingsMenu className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground" />}
       </nav>
     </header>
   );
