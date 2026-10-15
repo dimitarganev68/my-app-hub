@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 import { queryOptions, useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -18,6 +19,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 const groupsQuery = queryOptions({ queryKey: ["groups"], queryFn: () => listGroups() });
 
 export const Route = createFileRoute("/_authenticated/grupi")({
+  beforeLoad: async () => {
+    const { data } = await supabase.rpc("current_user_is_admin");
+    if (data !== true) throw redirect({ to: "/" });
+  },
   head: () => ({
     meta: [
       { title: "Групи — Фирма ЕООД" },
