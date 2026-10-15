@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedGrupiRouteImport } from './routes/_authenticated/grupi'
 import { Route as AuthenticatedNastroykiRouteImport } from './routes/_authenticated/nastroyki'
 import { Route as AuthenticatedOtpuskRouteImport } from './routes/_authenticated/otpusk'
 import { Route as AuthenticatedPotrebiteliRouteImport } from './routes/_authenticated/potrebiteli'
@@ -29,6 +30,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedGrupiRoute = AuthenticatedGrupiRouteImport.update({
+  id: '/grupi',
+  path: '/grupi',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNastroykiRoute = AuthenticatedNastroykiRouteImport.update({
   id: '/nastroyki',
@@ -50,6 +56,7 @@ const AuthenticatedPotrebiteliRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/grupi': typeof AuthenticatedGrupiRoute
   '/nastroyki': typeof AuthenticatedNastroykiRoute
   '/otpusk': typeof AuthenticatedOtpuskRoute
   '/potrebiteli': typeof AuthenticatedPotrebiteliRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/grupi': typeof AuthenticatedGrupiRoute
   '/nastroyki': typeof AuthenticatedNastroykiRoute
   '/otpusk': typeof AuthenticatedOtpuskRoute
   '/potrebiteli': typeof AuthenticatedPotrebiteliRoute
@@ -66,20 +74,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/grupi': typeof AuthenticatedGrupiRoute
   '/_authenticated/nastroyki': typeof AuthenticatedNastroykiRoute
   '/_authenticated/otpusk': typeof AuthenticatedOtpuskRoute
   '/_authenticated/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/nastroyki' | '/otpusk' | '/potrebiteli'
+  fullPaths:
+    '/' | '/auth' | '/grupi' | '/nastroyki' | '/otpusk' | '/potrebiteli'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/nastroyki' | '/otpusk' | '/potrebiteli'
+  to: '/' | '/auth' | '/grupi' | '/nastroyki' | '/otpusk' | '/potrebiteli'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/grupi'
     | '/_authenticated/nastroyki'
     | '/_authenticated/otpusk'
     | '/_authenticated/potrebiteli'
@@ -114,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/grupi': {
+      id: '/_authenticated/grupi'
+      path: '/grupi'
+      fullPath: '/grupi'
+      preLoaderRoute: typeof AuthenticatedGrupiRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/nastroyki': {
       id: '/_authenticated/nastroyki'
       path: '/nastroyki'
@@ -139,12 +157,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedGrupiRoute: typeof AuthenticatedGrupiRoute
   AuthenticatedNastroykiRoute: typeof AuthenticatedNastroykiRoute
   AuthenticatedOtpuskRoute: typeof AuthenticatedOtpuskRoute
   AuthenticatedPotrebiteliRoute: typeof AuthenticatedPotrebiteliRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedGrupiRoute: AuthenticatedGrupiRoute,
   AuthenticatedNastroykiRoute: AuthenticatedNastroykiRoute,
   AuthenticatedOtpuskRoute: AuthenticatedOtpuskRoute,
   AuthenticatedPotrebiteliRoute: AuthenticatedPotrebiteliRoute,
