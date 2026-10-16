@@ -18,6 +18,7 @@ function SettingsMenu({ className }: { className: string }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuItem asChild><Link to="/grupi">Групи</Link></DropdownMenuItem>
+        <DropdownMenuItem asChild><Link to="/nastroyki-potrebiteli">Потребители</Link></DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
