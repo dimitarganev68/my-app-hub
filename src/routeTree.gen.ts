@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedGrupiRouteImport } from './routes/_authenticated/grupi'
+import { Route as AuthenticatedNastroykiPotrebiteliRouteImport } from './routes/_authenticated/nastroyki-potrebiteli'
 import { Route as AuthenticatedOtpuskRouteImport } from './routes/_authenticated/otpusk'
 import { Route as AuthenticatedPotrebiteliRouteImport } from './routes/_authenticated/potrebiteli'
 
@@ -35,6 +36,12 @@ const AuthenticatedGrupiRoute = AuthenticatedGrupiRouteImport.update({
   path: '/grupi',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNastroykiPotrebiteliRoute =
+  AuthenticatedNastroykiPotrebiteliRouteImport.update({
+    id: '/nastroyki-potrebiteli',
+    path: '/nastroyki-potrebiteli',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedOtpuskRoute = AuthenticatedOtpuskRouteImport.update({
   id: '/otpusk',
   path: '/otpusk',
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/grupi': typeof AuthenticatedGrupiRoute
+  '/nastroyki-potrebiteli': typeof AuthenticatedNastroykiPotrebiteliRoute
   '/otpusk': typeof AuthenticatedOtpuskRoute
   '/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/grupi': typeof AuthenticatedGrupiRoute
+  '/nastroyki-potrebiteli': typeof AuthenticatedNastroykiPotrebiteliRoute
   '/otpusk': typeof AuthenticatedOtpuskRoute
   '/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
@@ -67,20 +76,34 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/grupi': typeof AuthenticatedGrupiRoute
+  '/_authenticated/nastroyki-potrebiteli': typeof AuthenticatedNastroykiPotrebiteliRoute
   '/_authenticated/otpusk': typeof AuthenticatedOtpuskRoute
   '/_authenticated/potrebiteli': typeof AuthenticatedPotrebiteliRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/grupi' | '/otpusk' | '/potrebiteli'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/grupi'
+    | '/nastroyki-potrebiteli'
+    | '/otpusk'
+    | '/potrebiteli'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/grupi' | '/otpusk' | '/potrebiteli'
+  to:
+    | '/'
+    | '/auth'
+    | '/grupi'
+    | '/nastroyki-potrebiteli'
+    | '/otpusk'
+    | '/potrebiteli'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/grupi'
+    | '/_authenticated/nastroyki-potrebiteli'
     | '/_authenticated/otpusk'
     | '/_authenticated/potrebiteli'
   fileRoutesById: FileRoutesById
@@ -121,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGrupiRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/nastroyki-potrebiteli': {
+      id: '/_authenticated/nastroyki-potrebiteli'
+      path: '/nastroyki-potrebiteli'
+      fullPath: '/nastroyki-potrebiteli'
+      preLoaderRoute: typeof AuthenticatedNastroykiPotrebiteliRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/otpusk': {
       id: '/_authenticated/otpusk'
       path: '/otpusk'
@@ -140,12 +170,15 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedGrupiRoute: typeof AuthenticatedGrupiRoute
+  AuthenticatedNastroykiPotrebiteliRoute: typeof AuthenticatedNastroykiPotrebiteliRoute
   AuthenticatedOtpuskRoute: typeof AuthenticatedOtpuskRoute
   AuthenticatedPotrebiteliRoute: typeof AuthenticatedPotrebiteliRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGrupiRoute: AuthenticatedGrupiRoute,
+  AuthenticatedNastroykiPotrebiteliRoute:
+    AuthenticatedNastroykiPotrebiteliRoute,
   AuthenticatedOtpuskRoute: AuthenticatedOtpuskRoute,
   AuthenticatedPotrebiteliRoute: AuthenticatedPotrebiteliRoute,
 }
