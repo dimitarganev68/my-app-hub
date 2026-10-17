@@ -66,7 +66,7 @@ function AuthUsersPage() {
   const [uname, setUname] = useState("");
   const [pwd, setPwd] = useState("");
   const [gid, setGid] = useState("");
-  const [errs, setErrs] = useState<Record<string, string>>({});
+  const [errs, setErrs] = useState<Partial<Record<"username" | "password" | "group", string>>>({});
   const [toDelete, setToDelete] = useState<Row | null>(null);
   const [pwdUser, setPwdUser] = useState<Row | null>(null);
   const [p1, setP1] = useState("");
@@ -99,7 +99,7 @@ function AuthUsersPage() {
   }
 
   async function save() {
-    const e: Record<string, string> = {};
+    const e: Partial<Record<"username" | "password" | "group", string>> = {};
     const u = uname.trim();
     if (!u) e.username = "Задължително поле";
     else if (!USERNAME_RE.test(u)) e.username = "Само латински букви, цифри, точка и тире";

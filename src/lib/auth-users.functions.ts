@@ -38,7 +38,7 @@ export const listAuthUsers = createServerFn({ method: "GET" })
     return data.users.map((u) => ({
       id: u.id,
       username: emailToUsername(u.email),
-      groupId: u.app_metadata?.groupID != null ? Number(u.app_metadata.groupID) : null,
+      groupId: u.app_metadata?.["groupID"] != null ? Number(u.app_metadata["groupID"]) : null,
       createdAt: u.created_at?.slice(0, 10) ?? "",
       lastSignIn: u.last_sign_in_at?.slice(0, 10) ?? "",
     }));
